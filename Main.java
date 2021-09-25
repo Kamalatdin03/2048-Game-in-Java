@@ -4,42 +4,27 @@ class Main
 {
 	public static void main(String[] args) 
 	{	
-		var board = new Board(4);
+		var game = new Game(4);
+		var input = new Scanner(System.in);
 
-		board.initalized();
+		game.initalized();
+		game.displayRules();
 
-		board.createNewCell(3, 0);
-		board.createNewCell(3, 1);
-		board.createNewCell(3, 2);
-		board.createNewCell(3, 3);
-
-		renderBoard(board.getBoard());
-
-		board.move(MoveDirection.Top);
-		renderBoard(board.getBoard());	
-
-		board.move(MoveDirection.Left);
-		renderBoard(board.getBoard());
-
-		board.move(MoveDirection.Right);
-		renderBoard(board.getBoard());		
-	}
-
-	public static void renderBoard(Cell[][] board)
-	{
-		String text = "";
-		int boardSize = board.length;
-
-		for (int i = 0; i < boardSize; i++)
+		do
 		{
-			for (int j = 0; j < boardSize; j++)
+			game.displayScore();
+			game.renderBoard();
+
+			String key = "";
+
+			do
 			{
-				text += board[i][j].toString() + " ";
+				key = input.next();
 			}
+			while (game.keyIsValid(key));
 
-			text += "\n";
+			game.move(key);
 		}
-
-		System.out.println(text + "\n");
+		while (!game.isEnd());
 	}
 }

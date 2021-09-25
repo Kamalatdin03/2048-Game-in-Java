@@ -1,7 +1,9 @@
 import java.util.Random; 
+import java.util.ArrayList;
 
 public class Board
 {
+	private int _score;
 	private int _boardSize;
 	private Random _random;
 	private Cell[][] _board;
@@ -27,18 +29,16 @@ public class Board
 
 	public void createNewCell()
 	{
-		int x = _random.nextInt(_boardSize);
-		int y = _random.nextInt(_boardSize);
+		Cell[] emptyCells = getEmptyCells();
+
+		if (emptyCells.length == 0)
+			throw new IllegalStateException("Empty cell not finded");
+
+		Cell cell = emptyCells[_random.nextInt(_boardSize)];
+
 		int value = _random.nextDouble() > .1 ? 1 : 2;
 
-		_board[y][x].setValue(value);
-	}
-
-	public void createNewCell(int x, int y)
-	{
-		int value = _random.nextDouble() > .1 ? 1 : 2;
-
-		_board[y][x].setValue(value);
+		_board[cell.getY()][cell.getX()].setValue(value);
 	}
 
 	public void move(MoveDirection direction)
@@ -61,10 +61,58 @@ public class Board
 				if (cell.isEmpty()) continue;
 
 				otherCell = findMergeCell(cell, direction);
-				if (otherCell != null) cell.merge(otherCell);
+				if (otherCell != null)
+				{
+					cell.merge(otherCell);
+					_score += otherCell.getPoint();
+				}
 
 				otherCell = findEmptyCell(cell, direction);
 				if (otherCell != null) cell.swap(otherCell);
+			}
+		}
+
+		createNewCell();
+	}
+
+	public Cell[] getEmptyCells()
+	{
+		ArrayList<Cell> emptyCells = new ArrayList<Cell>();
+
+		for (int i = 0; i < _boardSize; i++)
+		{
+			for (int j = 0; j < _boardSize; j++)
+			{
+				if (_board[i][j].isEmpty())
+					emptyCells.add(_board[i][j]);
+			}
+		}
+
+		Cell[] result = new Cell[emptyCells.size()];
+		emptyCells.toArray(result);
+
+		return result;
+	}
+
+	public Cell[][] getBoard()
+	{
+		return _board;
+	}
+
+	public int getScore()
+	{
+		return _score;
+	}
+
+	public void reset()
+	{
+		_score = 0;
+
+		for (int i = 0; i < _boardSize; i++)
+		{
+			for (int j = 0; j < _boardSize; j++)
+			{
+				_board[i][j].reset();
 			}
 		}
 	}
@@ -135,10 +183,5 @@ public class Board
 		}
 
 		return mergeCell;
-	}
-
-	public Cell[][] getBoard()
-	{
-		return _board;
 	}
 }

@@ -3,7 +3,6 @@ public class Cell
 	private int _x;
 	private int _y;
 	private int _value;
-	private boolean _isMerged;
 
 	public Cell(int x, int y, int value)
 	{
@@ -21,9 +20,7 @@ public class Cell
 	public void merge(Cell other)
 	{
 		other.setValue(_value + 1);
-		_value = 0;
-
-		_isMerged = true;
+		reset();
 	}
 
 	public void setValue(int value)
@@ -31,9 +28,9 @@ public class Cell
 		_value = value;
 	}
 
-	public void mergeEqualToFalse()
+	public void reset()
 	{
-		_isMerged = false;
+		_value = 0;
 	}
 
 	public int getPoint()
@@ -49,11 +46,6 @@ public class Cell
 	public int getY()
 	{
 		return _y;
-	}
-
-	public boolean isMerged()
-	{
-		return _isMerged;
 	}
 
 	public boolean isEmpty()
