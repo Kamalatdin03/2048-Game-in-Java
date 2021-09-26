@@ -1,5 +1,7 @@
 import java.util.Random; 
 import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Board
 {
@@ -7,6 +9,8 @@ public class Board
 	private int _boardSize;
 	private Random _random;
 	private Cell[][] _board;
+
+	public ActionListener OnReached;
 
 	public Board(int boardSize)
 	{
@@ -23,8 +27,21 @@ public class Board
 			for (int j = 0; j < _boardSize; j++)
 			{
 				_board[i][j] = new Cell(j, i, 0);
+				_board[i][j].OnReached = new ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						OnReached.actionPerformed(null);
+					}
+				};
 			}
 		}
+	}
+
+	public void createNewCell(int x, int y, int value)
+	{
+		_board[y][x].setValue(value);
 	}
 
 	public void createNewCell()
@@ -45,23 +62,23 @@ public class Board
 	{
 		boolean isSideDirection = direction == MoveDirection.Left || direction == MoveDirection.Right;
 
-		int yStart = isSideDirection ? 0 : (direction == MoveDirection.Top ? (1) : (_boardSize - 2));
+		int yStart = isSideDirection ? (direction == MoveDirection.Right ? (_boardSize - 1) : 0) : (direction == MoveDirection.Up ? (1) : (_boardSize - 2));
 
 		int xStart = !isSideDirection ? 0 : (direction == MoveDirection.Left ? 0 : (_boardSize - 1));
 
-		int yDimesion = !isSideDirection ? direction.getValue() : -1;
-		int xDimesion = isSideDirection ? -direction.getValue() : 1;
+		int yStep = direction.getValue();
+		int xStep = isSideDirection ? -direction.getValue() : 1;
 
-		for (int i = yStart; i >= 0 && i < _boardSize; i -= yDimesion)
+		for (int i = yStart; i >= 0 && i < _boardSize; i -= yStep)
 		{
-			for (int j = xStart; j >= 0 && j < _boardSize; j += xDimesion)
+			for (int j = xStart; j >= 0 && j < _boardSize; j += xStep)
 			{
 				Cell cell = isSideDirection ? _board[j][i] : _board[i][j], otherCell;
 
 				if (cell.isEmpty()) continue;
 
 				otherCell = findMergeCell(cell, direction);
-				if (otherCell != null)
+				if (otherCell != null && !otherCell.isMerged())
 				{
 					cell.merge(otherCell);
 					_score += otherCell.getPoint();
@@ -72,6 +89,7 @@ public class Board
 			}
 		}
 
+		resetCellFlags();
 		createNewCell();
 	}
 
@@ -113,6 +131,18 @@ public class Board
 			for (int j = 0; j < _boardSize; j++)
 			{
 				_board[i][j].reset();
+				_board[i][j].resetFlag();
+			}
+		}
+	}
+
+	public void resetCellFlags()
+	{
+		for (int i = 0; i < _boardSize; i++)
+		{
+			for (int j = 0; j < _boardSize; j++)
+			{
+				_board[i][j].resetFlag();
 			}
 		}
 	}
@@ -123,7 +153,7 @@ public class Board
 		{
 			for (int j = 0; j < _boardSize; j++)
 			{
-				if (hasEqualNeighbor(_board[i][j]))
+				if (!hasEqualNeighbor(_board[i][j]))
 					return true;
 			}
 		}

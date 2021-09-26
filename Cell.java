@@ -1,3 +1,4 @@
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Cell
@@ -5,6 +6,7 @@ public class Cell
 	private int _x;
 	private int _y;
 	private int _value;
+	private boolean _isMerged;
 
 	private final int MAX_POINT = 2048;
 
@@ -27,18 +29,24 @@ public class Cell
 	{
 		other.setValue(_value + 1);
 		reset();
+		_isMerged = true;
 	}
 
 	public void setValue(int value)
 	{
 		_value = value;
 
-		if (getPoint() == MAX_POINT) OnReached.notify();
+		if (getPoint() == MAX_POINT) OnReached.actionPerformed(null);
 	}
 
 	public void reset()
 	{
 		_value = 0;
+	}
+
+	public void resetFlag()
+	{
+		_isMerged = false;
 	}
 
 	public int getPoint()
@@ -54,6 +62,11 @@ public class Cell
 	public int getY()
 	{
 		return _y;
+	}
+
+	public boolean isMerged()
+	{
+		return _isMerged;
 	}
 
 	public boolean isEmpty()

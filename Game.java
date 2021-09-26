@@ -1,7 +1,11 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 public class Game
 {
 	private Board _board;
 	private int _boardSize;
+	private boolean _isWon;
 
 	private final int START_CELLS_COUNT = 2;
 	private final String[] KEYS = {"w", "s", "a", "d"};
@@ -16,19 +20,35 @@ public class Game
 	{
 		_board.initalized();
 
+		/*
 		for (int i = 0; i < START_CELLS_COUNT; i++)
 			_board.createNewCell();
+		*/
+
+		_board.createNewCell(0, 3, 2);
+		_board.createNewCell(1, 3, 4);
+		_board.createNewCell(2, 3, 4);
+		_board.createNewCell(3, 3, 1);
+
+		_board.OnReached = new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				_isWon = true;
+			}
+		};
 	}
 
 	public void move(String key)
 	{
 		if (key.equalsIgnoreCase("w"))
 		{
-			_board.move(MoveDirection.Top);
+			_board.move(MoveDirection.Up);
 		}
 		else if (key.equalsIgnoreCase("s"))
 		{
-			_board.move(MoveDirection.Bottom);
+			_board.move(MoveDirection.Down);
 		}
 		else if (key.equalsIgnoreCase("a"))
 		{
@@ -47,10 +67,10 @@ public class Game
 	public void displayRules()
 	{
 		System.out.println("Controls:");
-		System.out.println("   w for up move");
-		System.out.println("   s for down move");
-		System.out.println("   a for left move");
-		System.out.println("   d for rigth move\n");
+		System.out.println("   w for move up");
+		System.out.println("   s for move down");
+		System.out.println("   a for move left");
+		System.out.println("   d for move right\n");
 		System.out.println("Rules:");
 		System.out.println("  You must reach 2048 title");
 	}
@@ -99,11 +119,24 @@ public class Game
 	public void reset()
 	{
 		_board.reset();
+		_isWon = false;
 	}
 
 	public boolean isEnd()
 	{
-		return !_board.hasMove();
+		if (_isWon)
+		{
+			System.out.println("You Won");
+			return true;
+		}
+
+		if (!_board.hasMove())
+		{
+			System.out.println("You Lose");
+			return true;
+		}
+
+		return false;
 	}
 
 	public boolean keyIsValid(String text)

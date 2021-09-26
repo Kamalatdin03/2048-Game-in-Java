@@ -1,6 +1,6 @@
 public enum MoveDirection
 {
-	Top(-1), Bottom(1), Left(-1), Right(1);
+	Up(-1), Down(1), Left(-1), Right(1);
 
 	private int _value;
 
