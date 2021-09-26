@@ -69,9 +69,13 @@ public class Game
 
 		for (int i = 0; i < (3 + (_boardSize - 1) * 2); i++)
 		{
-			for (int j = 0; j < (_boardSize * 4 + 1); j++)
+			for (int j = 0; j < (5 + (_boardSize) * 3); j++)
 			{
-				if (i % 2 == 0) text.append("-");
+				if (i % 2 == 0)
+				{
+					if ((j + 1) % 4 == 0) text.append("----");
+					else text.append("-");
+				}
 				else
 				{
 					if (j % 4 == 0) text.append("|");
@@ -99,14 +103,14 @@ public class Game
 
 	public boolean isEnd()
 	{
-		return _board.getEmptyCells().length == 0;
+		return !_board.hasMove();
 	}
 
 	public boolean keyIsValid(String text)
 	{
 		for (int i = 0; i < KEYS.length; i++)
 		{
-			if (text == KEYS[i])
+			if (KEYS[i].equalsIgnoreCase(text))
 				return true;
 		}
 

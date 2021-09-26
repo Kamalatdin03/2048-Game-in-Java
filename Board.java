@@ -34,7 +34,7 @@ public class Board
 		if (emptyCells.length == 0)
 			throw new IllegalStateException("Empty cell not finded");
 
-		Cell cell = emptyCells[_random.nextInt(_boardSize)];
+		Cell cell = emptyCells[_random.nextInt(_boardSize - 1)];
 
 		int value = _random.nextDouble() > .1 ? 1 : 2;
 
@@ -117,32 +117,48 @@ public class Board
 		}
 	}
 
+	public boolean hasMove()
+	{
+		for (int i = 0; i < _boardSize; i++)
+		{
+			for (int j = 0; j < _boardSize; j++)
+			{
+				if (hasEqualNeighbor(_board[i][j]))
+					return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean hasEqualNeighbor(Cell cell)
+	{
+		if (cell.getX() + 1 < _boardSize)
+			return cell.getPoint() == _board[cell.getY()][cell.getX() + 1].getPoint();
+
+		if (cell.getY() + 1 < _boardSize)
+			return cell.getPoint() == _board[cell.getY() + 1][cell.getX()].getPoint();
+
+		return false;
+	}
+
 	private Cell findEmptyCell(Cell cell, MoveDirection direction)
 	{
-		int startP = (direction == MoveDirection.Top || direction == MoveDirection.Bottom) ? cell.getY() : cell.getX();
-
 		boolean isSideDirection = direction == MoveDirection.Left || direction == MoveDirection.Right;
+
+		int startP = !isSideDirection ? cell.getY() : cell.getX();
 
 		Cell emptyCell = null;
 
 		for (int i = startP + direction.getValue(); i >= 0 && i < _boardSize; i += direction.getValue())
 		{
-			if (isSideDirection)
+			Cell otherCell = isSideDirection ? _board[cell.getY()][i] : _board[i][cell.getX()];
+
+			if (otherCell.isEmpty())
 			{
-				if (_board[cell.getY()][i].isEmpty())
-				{
-					emptyCell = _board[cell.getY()][i];
-				}
-				else break;
+				emptyCell = otherCell;
 			}
-			else
-			{
-				if (_board[i][cell.getX()].isEmpty())
-				{
-					emptyCell = _board[i][cell.getX()];
-				}
-				else break;
-			}
+			else break;
 		}
 
 		return emptyCell;
@@ -150,35 +166,23 @@ public class Board
 
 	private Cell findMergeCell(Cell cell, MoveDirection direction)
 	{
-		int startP = (direction == MoveDirection.Top || direction == MoveDirection.Bottom) ? cell.getY() : cell.getX();
-
 		boolean isSideDirection = direction == MoveDirection.Left || direction == MoveDirection.Right;
+
+		int startP = !isSideDirection ? cell.getY() : cell.getX();
 
 		Cell mergeCell = null;
 
 		for (int i = startP + direction.getValue(); i >= 0 && i < _boardSize; i += direction.getValue())
 		{
-			if (isSideDirection)
-			{
-				if (_board[cell.getY()][i].isEmpty()) continue;
-				else
-				{
-					if (cell.getPoint() == _board[cell.getY()][i].getPoint())
-						mergeCell = _board[cell.getY()][i];
+			Cell otherCell = isSideDirection ? _board[cell.getY()][i] : _board[i][cell.getX()];
 
-					break;
-				}
-			}
+			if (otherCell.isEmpty()) continue;
 			else
 			{
-				if (_board[i][cell.getX()].isEmpty()) continue;
-				else 
-				{
-					if (cell.getPoint() == _board[i][cell.getX()].getPoint())
-						mergeCell = _board[i][cell.getX()];
+				if (cell.getPoint() == otherCell.getPoint())
+					mergeCell =otherCell;
 
-					break;
-				}
+				break;
 			}
 		}
 

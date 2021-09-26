@@ -1,8 +1,14 @@
+import java.awt.event.ActionListener;
+
 public class Cell
 {
 	private int _x;
 	private int _y;
 	private int _value;
+
+	private final int MAX_POINT = 2048;
+
+	public ActionListener OnReached;
 
 	public Cell(int x, int y, int value)
 	{
@@ -26,6 +32,8 @@ public class Cell
 	public void setValue(int value)
 	{
 		_value = value;
+
+		if (getPoint() == MAX_POINT) OnReached.notify();
 	}
 
 	public void reset()

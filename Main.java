@@ -21,7 +21,7 @@ class Main
 			{
 				key = input.next();
 			}
-			while (game.keyIsValid(key));
+			while (!game.keyIsValid(key));
 
 			game.move(key);
 		}
