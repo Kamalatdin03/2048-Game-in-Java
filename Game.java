@@ -19,17 +19,10 @@ public class Game
 	public void initalized()
 	{
 		_board.initalized();
-
-		/*
+		
 		for (int i = 0; i < START_CELLS_COUNT; i++)
 			_board.createNewCell();
-		*/
-
-		_board.createNewCell(0, 3, 2);
-		_board.createNewCell(1, 3, 4);
-		_board.createNewCell(2, 3, 4);
-		_board.createNewCell(3, 3, 1);
-
+		
 		_board.OnReached = new ActionListener()
 		{
 			@Override
